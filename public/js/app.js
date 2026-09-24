@@ -183,6 +183,37 @@ class ClipForgeApp {
       });
     });
 
+    // Keyboard Shortcuts (Premiere / CapCut standards)
+    window.addEventListener('keydown', (e) => {
+      // Don't trigger shortcuts if user is typing in an input or editable div
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable) {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        this.togglePlay();
+      } else if (e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        this.splitActiveClip();
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        this.rippleDeleteActiveClip();
+      } else if (e.key === 'z' || e.key === 'Z') {
+        e.preventDefault();
+        this.togglePunchInZoom();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.seekTo(Math.max(0, this.currentTime - (e.shiftKey ? 1.0 : 0.05)));
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this.seekTo(this.currentTime + (e.shiftKey ? 1.0 : 0.05));
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        this.toggleMute();
+      }
+    });
+
     // Subtitle Search & Category Filters
     document.getElementById('captionSearchInput').addEventListener('input', (e) => {
       this.filterTemplates(e.target.value);
@@ -325,8 +356,28 @@ class ClipForgeApp {
 
         clipEl.style.left = `${leftPx}px`;
         clipEl.style.width = `${widthPx}px`;
-        clipEl.innerText = clip.name || clip.text || 'Clip';
         clipEl.title = `${clip.name || clip.text} (${clip.timelineIn}s - ${clip.timelineOut}s)`;
+
+        // If audio track, render waveform bars inside clip
+        if (track.id === 'audio-1' || track.id === 'audio-3') {
+          clipEl.style.display = 'flex';
+          clipEl.style.alignItems = 'center';
+          clipEl.style.overflow = 'hidden';
+          clipEl.style.padding = '0 4px';
+          
+          let waveformSvg = `<div style="position: absolute; left: 6px; z-index: 2; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">${clip.name || 'Audio'}</div>`;
+          waveformSvg += `<svg style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.45; pointer-events: none;" preserveAspectRatio="none" viewBox="0 0 100 20">`;
+          const barsCount = Math.max(10, Math.floor(widthPx / 4));
+          for (let b = 0; b < barsCount; b++) {
+            const h = 4 + Math.sin(b * 0.7) * 6 + (b % 3 === 0 ? 5 : 2);
+            const x = (b / barsCount) * 100;
+            waveformSvg += `<rect x="${x}%" y="${10 - h / 2}" width="1.5" height="${h}" rx="0.5" fill="#A7F3D0" />`;
+          }
+          waveformSvg += `</svg>`;
+          clipEl.innerHTML = waveformSvg;
+        } else {
+          clipEl.innerText = clip.name || clip.text || 'Clip';
+        }
 
         if (this.selectedClip && this.selectedClip.id === clip.id) {
           clipEl.style.outline = '2px solid #FACC15';

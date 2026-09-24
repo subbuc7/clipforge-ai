@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  clipforge-ai:
+    build: .
+    container_name: clipforge-ai
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./renders:/app/renders
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
