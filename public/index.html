@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClipForge AI - Autonomous Video Creation & Repurposing Platform</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="brand-badge">
+        <div class="brand-logo-icon">
+          <i data-lucide="scissors"></i>
+        </div>
+        <span>ClipForge</span>
+        <span class="badge-ai">AI Pro</span>
+      </div>
+
+      <div class="status-pill" id="wsStatus">
+        <span class="status-dot"></span>
+        <span id="wsStatusText">AI Engine Ready</span>
+      </div>
+    </div>
+
+    <!-- Quick Load Samples & Upload Actions -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button class="tool-btn" id="loadPodcastBtn" title="Load real 4K Podcast Sample">
+        <i data-lucide="mic"></i> Sample Podcast
+      </button>
+      <button class="tool-btn" id="loadProductBtn" title="Load real Product Launch Sample">
+        <i data-lucide="box"></i> Sample Product
+      </button>
+
+      <input type="file" id="videoFileInput" accept="video/*" style="display: none;">
+      <button class="tool-btn" id="uploadBtn" style="background: rgba(59, 130, 246, 0.2); border-color: #3B82F6; color: white;">
+        <i data-lucide="upload"></i> Upload Video
+      </button>
+
+      <button class="tool-btn" id="renderModalBtn" style="background: linear-gradient(135deg, #2563EB, #7C3AED); color: white; font-weight: 700; border: none; padding: 6px 14px;">
+        <i data-lucide="sparkles"></i> Render Video
+      </button>
+    </div>
+  </header>
+
+  <!-- Studio Main Workspace -->
+  <main class="studio-body">
+
+    <!-- Left Tab Icons Bar -->
+    <nav class="sidebar-tabs">
+      <button class="tab-btn active" data-tab="tab-analysis" title="AI Video Analysis">
+        <i data-lucide="bar-chart-2"></i>
+        <span>Analysis</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-captions" title="200+ Caption Templates">
+        <i data-lucide="subtitles"></i>
+        <span>Captions</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-transcript" title="Speech & Transcript Studio">
+        <i data-lucide="file-text"></i>
+        <span>Script</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-dubbing" title="Regional Language Voice Dubbing">
+        <i data-lucide="languages"></i>
+        <span>Dubbing</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-assistant" title="AI Natural Language Assistant">
+        <i data-lucide="message-square-code"></i>
+        <span>AI Copilot</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-thumbnails" title="AI Thumbnails & Metadata">
+        <i data-lucide="image"></i>
+        <span>Social</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-brand" title="Brand System">
+        <i data-lucide="palette"></i>
+        <span>Brand</span>
+      </button>
+    </nav>
+
+    <!-- Left Content Drawers -->
+    <section class="drawer-content" id="drawerContent">
+
+      <!-- 1. AI Analysis & Story Tab -->
+      <div class="tab-pane" id="tab-analysis">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="cpu"></i> AI Analysis & Story</h2>
+          <span style="font-size: 0.75rem; color: #38BDF8;" id="rawDurationBadge">--s</span>
+        </div>
+
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(30,58,138,0.4), rgba(88,28,135,0.4));">
+          <div class="stat-label">Virality & Retention Score</div>
+          <div class="stat-value" style="color: #FACC15;">
+            <span id="viralityScore">94</span>/100
+            <span style="font-size: 0.75rem; color: #4ADE80; font-weight: 600;">🔥 High Retention Hook</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="stat-card">
+            <div class="stat-label">Scenes / Cuts</div>
+            <div class="stat-value" id="sceneCount">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Dead Air Removed</div>
+            <div class="stat-value" id="silenceCount">--</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Editing Style Mode</div>
+          <select id="editingStyleSelect" style="width: 100%; background: #0B0F17; color: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-weight: 600; margin-top: 4px;">
+            <option value="Social/Reel" selected>Social / Reel (Fast Cuts, Punch-Ins)</option>
+            <option value="Cinematic">Cinematic (2.35:1 Letterbox, Color Graded)</option>
+            <option value="Advertisement">Advertisement (Urgency CTA, High Saturation)</option>
+            <option value="Product">Product Launch (Clean Glassmorphism)</option>
+            <option value="Talking Head">Talking Head (Smart Zoom & Framing)</option>
+            <option value="Podcast">Podcast Studio (Dual Speaker Layout)</option>
+            <option value="Educational">Educational (Highlighter Callouts)</option>
+            <option value="Luxury">Luxury (Haute Serif Typography)</option>
+            <option value="Food">Food (Sensory Saturation Boost)</option>
+            <option value="Travel">Travel (Scenic Dynamic Cuts)</option>
+            <option value="Gaming">Gaming (Cyberpunk HUD Glitch)</option>
+            <option value="Motivational">Motivational (Bold High Octane)</option>
+          </select>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Detected Story Arc</div>
+          <div style="font-size: 0.75rem; line-height: 1.5; color: var(--text-muted); margin-top: 4px;">
+            <div><strong>🪝 Hook (0:00 - 0:04):</strong> <span id="arcHook">Detected opening retention hook</span></div>
+            <div style="margin-top: 4px;"><strong>⚡ Core Story:</strong> <span id="arcCore">Narrative insight delivery</span></div>
+            <div style="margin-top: 4px;"><strong>🎯 Conversion CTA:</strong> <span id="arcCTA">Closing sign-off and follow prompt</span></div>
+          </div>
+        </div>
+
+        <button class="tool-btn" id="runAutoEditBtn" style="width: 100%; justify-content: center; background: #3B82F6; color: white; padding: 10px; font-weight: 700;">
+          <i data-lucide="wand-2"></i> Regenerate AI Professional Edit
+        </button>
+      </div>
+
+      <!-- 2. 200+ Caption Templates Tab -->
+      <div class="tab-pane" id="tab-captions" style="display: none;">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="subtitles"></i> 200+ Caption Styles</h2>
+          <span style="font-size: 0.75rem; color: #FACC15;" id="templatesCountBadge">215 Loaded</span>
+        </div>
+
+        <input type="text" id="captionSearchInput" placeholder="Search templates (e.g. Hormozi, Neon, Gold)..." style="width: 100%; background: #0B0F17; border: 1px solid var(--border); border-radius: 6px; padding: 8px; color: white; font-size: 0.8rem; margin-bottom: 8px;">
+
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px;" id="captionCategoryPills">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="template-grid" id="templatesGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 3. Transcript Studio Tab -->
+      <div class="tab-pane" id="tab-transcript" style="display: none;">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="file-text"></i> Interactive Transcript</h2>
+          <button class="tool-btn" id="exportSrtBtn" style="font-size: 0.7rem;">Export SRT</button>
+        </div>
+
+        <input type="text" id="transcriptSearchInput" placeholder="Search in transcript..." style="width: 100%; background: #0B0F17; border: 1px solid var(--border); border-radius: 6px; padding: 8px; color: white; font-size: 0.8rem; margin-bottom: 12px;">
+
+        <div id="transcriptSentencesContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: calc(100vh - 350px); overflow-y: auto;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 4. Regional Language AI & Dubbing Tab -->
+      <div class="tab-pane" id="tab-dubbing" style="display: none;">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="languages"></i> Regional Dubbing</h2>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Select Target Language</div>
+          <select id="regionalLangSelect" style="width: 100%; background: #0B0F17; color: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-weight: 600; margin-top: 4px;">
+            <option value="te">Telugu (తెలుగు)</option>
+            <option value="hi">Hindi (हिन्दी)</option>
+            <option value="ta">Tamil (தமிழ்)</option>
+            <option value="ml">Malayalam (മലയാളം)</option>
+            <option value="mr">Marathi (मराठी)</option>
+            <option value="bn">Bengali (বাংলা)</option>
+            <option value="gu">Gujarati (ગુજરાતી)</option>
+            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+            <option value="or">Odia (ଓଡ଼ିଆ)</option>
+            <option value="ur">Urdu (اردو)</option>
+            <option value="en">English (US Original)</option>
+          </select>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Voice Synthesis Style</div>
+          <select id="voiceStyleSelect" style="width: 100%; background: #0B0F17; color: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-weight: 600; margin-top: 4px;">
+            <option value="creator">Energetic Creator</option>
+            <option value="storyteller">Warm Storyteller</option>
+            <option value="documentary">Authoritative Documentary</option>
+          </select>
+        </div>
+
+        <button class="tool-btn" id="runLocalizationBtn" style="width: 100%; justify-content: center; background: #22C55E; color: black; font-weight: 800; padding: 10px;">
+          <i data-lucide="globe"></i> Translate, Subtitle & Dub Video
+        </button>
+
+        <div class="stat-card" style="margin-top: 12px;" id="dubbingStatusCard">
+          <div class="stat-label">Dubbed Audio Track</div>
+          <div id="dubbingAudioStatus" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Original speech active. Click above to generate regional dub.</div>
+        </div>
+      </div>
+
+      <!-- 5. AI Copilot Natural Language Assistant Tab -->
+      <div class="tab-pane" id="tab-assistant" style="display: none;">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="bot"></i> AI Editing Assistant</h2>
+        </div>
+
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">
+          Type natural language commands to directly modify your multi-track timeline:
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;">
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Make this more cinematic »</button>
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Remove unnecessary pauses »</button>
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Make it 30 seconds »</button>
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Make the hook stronger »</button>
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Add B-roll »</button>
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Make the captions more premium »</button>
+          <button class="tool-btn prompt-suggestion" style="justify-content: flex-start;">« Create a Telugu version »</button>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="assistantInput" placeholder="Command AI to edit video..." style="flex: 1; background: #0B0F17; border: 1px solid var(--border); border-radius: 6px; padding: 8px; color: white; font-size: 0.8rem;">
+          <button class="tool-btn" id="assistantSendBtn" style="background: #3B82F6; color: white;">
+            <i data-lucide="send"></i>
+          </button>
+        </div>
+
+        <div id="assistantHistory" style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+          <!-- Command logs -->
+        </div>
+      </div>
+
+      <!-- 6. Thumbnails & Social Tab -->
+      <div class="tab-pane" id="tab-thumbnails" style="display: none;">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="image"></i> AI Thumbnails & Social</h2>
+        </div>
+
+        <div id="thumbnailsContainer" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <!-- Generated thumbs -->
+        </div>
+
+        <div class="stat-card" style="margin-top: 12px;">
+          <div class="stat-label">Viral Social Headline</div>
+          <input type="text" id="socialTitleInput" value="The Biggest Secret to Viral Videos in 2026 🚀" style="width: 100%; background: #0B0F17; border: 1px solid var(--border); border-radius: 4px; padding: 6px; color: white; font-size: 0.8rem; margin-top: 4px;">
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">High-Retention Hashtags</div>
+          <textarea id="socialHashtagsInput" rows="2" style="width: 100%; background: #0B0F17; border: 1px solid var(--border); border-radius: 4px; padding: 6px; color: #38BDF8; font-size: 0.75rem; margin-top: 4px;">#shorts #viral #ai #videoediting #creators #clipforge</textarea>
+        </div>
+      </div>
+
+      <!-- 7. Brand Kit Tab -->
+      <div class="tab-pane" id="tab-brand" style="display: none;">
+        <div class="drawer-header">
+          <h2 class="drawer-title"><i data-lucide="palette"></i> Brand Kit</h2>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Brand Name</div>
+          <input type="text" id="brandNameInput" value="ClipForge Studio" style="width: 100%; background: #0B0F17; border: 1px solid var(--border); border-radius: 4px; padding: 6px; color: white; font-size: 0.8rem; margin-top: 4px;">
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Brand Primary Color</div>
+          <input type="color" id="brandColorInput" value="#FFE600" style="width: 100%; height: 36px; background: transparent; border: none; cursor: pointer;">
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Watermark Position</div>
+          <select id="watermarkPosSelect" style="width: 100%; background: #0B0F17; color: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-weight: 600; margin-top: 4px;">
+            <option value="top-right" selected>Top Right</option>
+            <option value="bottom-right">Bottom Right</option>
+            <option value="top-left">Top Left</option>
+            <option value="none">No Watermark</option>
+          </select>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Center Stage Video Preview -->
+    <section class="video-preview-container">
+
+      <!-- Top Aspect Ratio Toolbar -->
+      <div class="preview-toolbar">
+        <button class="aspect-btn active" data-ratio="9:16">9:16 (Shorts/Reels)</button>
+        <button class="aspect-btn" data-ratio="16:9">16:9 (Landscape)</button>
+        <button class="aspect-btn" data-ratio="1:1">1:1 (Square)</button>
+        <button class="aspect-btn" data-ratio="4:5">4:5 (Feed)</button>
+        <button class="aspect-btn" data-ratio="2:3">2:3 (Pin)</button>
+      </div>
+
+      <!-- Player Canvas -->
+      <div class="player-stage" id="playerStage" style="width: 320px; height: 568px;">
+        <video id="programVideo" playsinline preload="auto"></video>
+        <canvas id="programCanvas" width="1080" height="1920"></canvas>
+      </div>
+
+      <!-- Bottom Playback Controls -->
+      <div class="player-controls">
+        <button class="control-btn" id="rewindBtn" title="Rewind 5s"><i data-lucide="rotate-ccw"></i></button>
+        <button class="control-btn play-btn" id="playBtn" title="Play/Pause"><i data-lucide="play"></i></button>
+        <button class="control-btn" id="forwardBtn" title="Forward 5s"><i data-lucide="rotate-cw"></i></button>
+
+        <span class="time-badge" id="timeDisplay">00:00 / 00:00</span>
+
+        <button class="control-btn" id="volumeBtn" title="Mute/Unmute"><i data-lucide="volume-2"></i></button>
+        <button class="control-btn" id="loopBtn" title="Loop Toggle"><i data-lucide="repeat"></i></button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Multi-Track Timeline -->
+  <footer class="timeline-panel">
+    <div class="timeline-toolbar">
+      <div class="toolbar-tools">
+        <button class="tool-btn" id="splitClipBtn" title="Split clip at playhead"><i data-lucide="scissors"></i> Split</button>
+        <button class="tool-btn" id="rippleDeleteBtn" title="Ripple delete silent gap"><i data-lucide="trash-2"></i> Ripple Cut</button>
+        <button class="tool-btn" id="punchInToggleBtn" title="Toggle 1.18x punch-in zoom"><i data-lucide="zoom-in"></i> Punch-In</button>
+        <button class="tool-btn" id="undoBtn" title="Undo"><i data-lucide="undo-2"></i></button>
+        <button class="tool-btn" id="redoBtn" title="Redo"><i data-lucide="redo-2"></i></button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.7rem; color: var(--text-dim);">Zoom:</span>
+        <input type="range" id="timelineZoomInput" min="10" max="60" value="25" style="width: 80px; accent-color: #3B82F6;">
+        <span style="font-size: 0.75rem; font-family: monospace; color: #38BDF8;" id="editedDurationBadge">00:00.0</span>
+      </div>
+    </div>
+
+    <div class="timeline-viewport" id="timelineViewport">
+      <!-- Tracks Header -->
+      <div class="timeline-tracks-header">
+        <div class="track-header-item" style="height: 22px; background: #0B0F17;">RULER</div>
+        <div class="track-header-item"><i data-lucide="layers" style="width:12px;"></i> Video 2 (B-Roll)</div>
+        <div class="track-header-item"><i data-lucide="video" style="width:12px;"></i> Video 1 (A-Roll)</div>
+        <div class="track-header-item"><i data-lucide="subtitles" style="width:12px;"></i> Subtitles</div>
+        <div class="track-header-item"><i data-lucide="mic" style="width:12px;"></i> Audio 1 (Voice)</div>
+        <div class="track-header-item"><i data-lucide="music" style="width:12px;"></i> Audio 3 (Music)</div>
+      </div>
+
+      <!-- Tracks Lane -->
+      <div class="timeline-tracks-lane" id="timelineTracksLane">
+        <div class="timeline-ruler" id="timelineRuler"></div>
+        <div class="timeline-playhead" id="timelinePlayhead">
+          <div class="playhead-handle"></div>
+        </div>
+        <div class="track-lane" id="lane-video-2"></div>
+        <div class="track-lane" id="lane-video-1"></div>
+        <div class="track-lane" id="lane-subtitles"></div>
+        <div class="track-lane" id="lane-audio-1"></div>
+        <div class="track-lane" id="lane-audio-3"></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Real Rendering Modal -->
+  <div class="modal-overlay" id="renderModal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="display: flex; align-items: center; gap: 8px; font-size: 1.1rem;"><i data-lucide="film"></i> Production Video Render</h3>
+        <button class="control-btn" id="closeRenderModalBtn"><i data-lucide="x"></i></button>
+      </div>
+
+      <div style="margin: 16px 0;">
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Target Platform & Aspect Ratio:</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+          <button class="tool-btn active platform-choice-btn" data-platform="TikTok" data-ratio="9:16">TikTok (9:16)</button>
+          <button class="tool-btn platform-choice-btn" data-platform="Instagram Reels" data-ratio="9:16">Reels (9:16)</button>
+          <button class="tool-btn platform-choice-btn" data-platform="YouTube Shorts" data-ratio="9:16">Shorts (9:16)</button>
+          <button class="tool-btn platform-choice-btn" data-platform="YouTube" data-ratio="16:9">YouTube (16:9)</button>
+          <button class="tool-btn platform-choice-btn" data-platform="Instagram Feed" data-ratio="4:5">Feed (4:5)</button>
+          <button class="tool-btn platform-choice-btn" data-platform="LinkedIn" data-ratio="1:1">LinkedIn (1:1)</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+          <input type="checkbox" id="burnCaptionsCheckbox" checked style="accent-color: #3B82F6; width: 16px; height: 16px;">
+          <label for="burnCaptionsCheckbox" style="font-size: 0.85rem; color: white;">Burn animated karaoke captions directly into MP4</label>
+        </div>
+
+        <div id="renderProgressContainer" style="display: none;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #38BDF8;">
+            <span id="renderStageText">Encoding video frames...</span>
+            <span id="renderPercentText">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="renderProgressBar"></div>
+          </div>
+        </div>
+
+        <div id="renderDownloadArea" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 12px; margin-top: 12px;">
+          <div style="font-size: 0.9rem; font-weight: 700; color: #4ADE80; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="check-circle-2"></i> Render Complete!
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <a id="downloadMp4Btn" href="#" download class="tool-btn" style="flex: 1; justify-content: center; background: #22C55E; color: black; font-weight: 800; text-decoration: none; padding: 8px;">
+              <i data-lucide="download"></i> Download MP4
+            </a>
+            <button id="publishSocialBtn" class="tool-btn" style="background: #3B82F6; color: white; padding: 8px 14px;">
+              <i data-lucide="share-2"></i> Publish
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="tool-btn" id="startRenderBtn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #2563EB, #7C3AED); color: white; font-weight: 800; padding: 12px; border: none; font-size: 0.95rem;">
+        <i data-lucide="play"></i> Start Real FFmpeg Render
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="/js/app.js"></script>
+</body>
+</html>

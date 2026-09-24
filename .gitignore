@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Uploads and temporary renders
+uploads/*
+!uploads/.gitkeep
+renders/*
+!renders/.gitkeep
+
+# Temporary generated audio and thumbnails
+public/assets/generated_audio/*
+!public/assets/generated_audio/.gitkeep
+public/assets/thumbs/*
+!public/assets/thumbs/.gitkeep
+public/assets/thumbnails/*
+!public/assets/thumbnails/.gitkeep
+
+# Environment variables & Logs
+.env
+*.log
+.DS_Store
